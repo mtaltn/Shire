@@ -1,0 +1,108 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Shire.WebMvc.Entities.Product>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Index.cshtml -->
+
+<div class="container">
+    <div class="row">
+        <!-- Index.cshtml veya _ProductListPartial.cshtml içindeki col-md-3 içindeki div'in içine ekleyin -->
+
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    Categories
+                </a>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <a href="#" class="list-group-item list-group-item-action category-filter" data-category-id="@category.Id">
+                        @category.Name
+                    </a>
+                }
+                <a href="#" class="list-group-item list-group-item-action clear-filters">
+                    Clear Filters
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by product name">
+                    <button id="searchButton" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+
+            <div id="productListContainer">
+                @await Html.PartialAsync("_ProductListPartial", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".category-filter").click(function (event) {
+                event.preventDefault();
+
+                var categoryId = $(this).data("category-id");
+
+                $.ajax({
+                    url: "/Home/FilterProducts", // HomeController'daki bir aksiyon
+                    type: "GET",
+                    data: { categoryId: categoryId },
+                    success: function (result) {
+                        $("#productListContainer").html(result);
+                    },
+                    error: function (error) {
+                        console.error("Filtering failed:", error);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".clear-filters").click(function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: "/Home/ClearFilters", // HomeController'daki bir aksiyon
+                    type: "GET",
+                    success: function (result) {
+                        $("#productListContainer").html(result);
+                    },
+                    error: function (error) {
+                        console.error("Clearing filters failed:", error);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#searchButton").click(function () {
+                var searchString = $("#searchInput").val();
+
+                $.ajax({
+                    url: "/Home/SearchProducts", // HomeController'daki bir aksiyon
+                    type: "GET",
+                    data: { searchString: searchString },
+                    success: function (result) {
+                        $("#productListContainer").html(result);
+                    },
+                    error: function (error) {
+                        console.error("Product search failed:", error);
+                    }
+                });
+            });
+        });
+    </script>
+}
+

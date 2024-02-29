@@ -1,0 +1,25 @@
+﻿@using Shire.WebMvc.Entities
+@model User
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<h2>Kullanıcı Profili</h2>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Kullanıcı Adı:</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+
+        <dt class="col-sm-2">E-posta Adresi:</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-primary">Parola Sıfırla</a>
+</div>

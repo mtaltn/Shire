@@ -1,0 +1,46 @@
+﻿@using System.Security.Claims
+
+@model IEnumerable<Shire.WebMvc.Entities.Product>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning" role="alert">
+        No products found.
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Product Actions">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Basket" asp-action="AddBasket" method="post">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <input type="hidden" name="userId2" value="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value" />
+                                    <button type="submit" class="btn btn-primary">Add to Basket</button>
+                                </form>
+                            }
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
